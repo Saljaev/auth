@@ -1,0 +1,10 @@
+server:
+  address: "0.0.0.0:8080"
+  timeout: 4s
+  idle_timeout: 60s
+jwt:
+  issuer: auth-svc
+  secret: secret
+  token_ttl: 5m
+  session_ttl: 1h
+  refresh_token_length: 32
