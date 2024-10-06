@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"auth/internal/models"
 	"auth/internal/token"
 	"auth/internal/usecase"
+	"context"
 	"encoding/json"
 	"log/slog"
 	"net/http"
@@ -12,10 +14,17 @@ import (
 type AuthHandler struct {
 	log         *slog.Logger
 	jwt         *token.Service
-	user        *usecase.UserUseCase
+	user        UserUseCase
 	tokenTTL    time.Duration
 	sessionTTL  time.Duration
 	tokenLength int
+}
+
+var _ UserUseCase = (*usecase.UserUseCase)(nil)
+
+type UserUseCase interface {
+	Add(ctx context.Context, user *models.User) error
+	GetByGUID(ctx context.Context, GUID string) (*models.User, error)
 }
 
 func NewAuthHandler(l *slog.Logger, j *token.Service, u *usecase.UserUseCase, tTTL, sTTL time.Duration, tl int) *AuthHandler {

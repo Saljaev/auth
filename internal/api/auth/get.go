@@ -2,8 +2,9 @@ package auth
 
 import (
 	"auth/internal/models"
-	"crypto/rand"
+	"context"
 	"encoding/base64"
+	"fmt"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
@@ -57,16 +58,9 @@ func (a *AuthHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	refreshToken := make([]byte, a.tokenLength)
-	_, err = rand.Read(refreshToken)
-	if err != nil {
-		a.log.Error("failed to generate refresh token", slog.Any("error", err.Error()))
-		a.writeError(w, "internal error", http.StatusInternalServerError)
+	refreshToken := fmt.Sprintf("%s %s", guid, IPAddress)
 
-		return
-	}
-
-	refreshTokenHash, err := bcrypt.GenerateFromPassword(refreshToken, bcrypt.DefaultCost)
+	refreshTokenHash, err := bcrypt.GenerateFromPassword([]byte(refreshToken), bcrypt.DefaultCost)
 	if err != nil {
 		a.log.Error("failed to generate hash from refresh token", slog.Any("error", err.Error()))
 		a.writeError(w, "internal error", http.StatusInternalServerError)
@@ -76,7 +70,7 @@ func (a *AuthHandler) Get(w http.ResponseWriter, r *http.Request) {
 
 	user.Token = string(refreshTokenHash)
 
-	err = a.user.Add(user)
+	err = a.user.Add(context.Background(), user)
 	if err != nil {
 		a.log.Error("failed to add user", slog.Any("error", err.Error()))
 		a.writeError(w, "internal error", http.StatusInternalServerError)
@@ -85,7 +79,7 @@ func (a *AuthHandler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	accessCookie := generateCookie(
-		"access_token",
+		AccessToken,
 		token,
 		"/",
 		"",
@@ -96,8 +90,8 @@ func (a *AuthHandler) Get(w http.ResponseWriter, r *http.Request) {
 	)
 
 	refreshCookie := generateCookie(
-		"refresh_token",
-		base64.URLEncoding.EncodeToString(refreshToken),
+		RefreshToken,
+		base64.URLEncoding.EncodeToString([]byte(refreshToken)),
 		"/",
 		"",
 		a.sessionTTL,
