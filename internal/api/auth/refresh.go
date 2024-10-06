@@ -69,7 +69,7 @@ func (a *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	newIPAddress := s[1]
 
 	if IPAddress != newIPAddress {
-		a.log.Info("new ip address user", slog.Any("id", guid))
+		a.log.Info("new ip address user", slog.Any("GUID", guid))
 		if err = email.SendEmailWarning(userEmail, IPAddress, newIPAddress); err != nil {
 			a.log.Error("failed to send email warning to user", slog.Any("id", guid), slog.Any("error", err))
 		}
@@ -77,5 +77,5 @@ func (a *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	a.Get(w, r)
-	a.log.Info("successful refresh tokens to user", slog.Any("id", guid))
+	a.log.Info("successful refresh tokens to user", slog.Any("GUID", guid))
 }

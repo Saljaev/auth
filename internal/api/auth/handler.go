@@ -13,7 +13,7 @@ import (
 
 type AuthHandler struct {
 	log         *slog.Logger
-	jwt         *token.Service
+	jwt         JWTService
 	user        UserUseCase
 	tokenTTL    time.Duration
 	sessionTTL  time.Duration
@@ -25,6 +25,13 @@ var _ UserUseCase = (*usecase.UserUseCase)(nil)
 type UserUseCase interface {
 	Add(ctx context.Context, user *models.User) error
 	GetByGUID(ctx context.Context, GUID string) (*models.User, error)
+}
+
+var _ JWTService = (*token.Service)(nil)
+
+type JWTService interface {
+	Issue(user *models.User) (string, error)
+	ParseUser(accessToken string) (*models.User, error)
 }
 
 func NewAuthHandler(l *slog.Logger, j *token.Service, u *usecase.UserUseCase, tTTL, sTTL time.Duration, tl int) *AuthHandler {
