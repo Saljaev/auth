@@ -1,9 +1,8 @@
 storage:
-  pg_user: kosloeb
+  pg_user: testuser
   pg_password: secret
-  pg_database: localhost
-  container_name: postgres
-
+  pg_database: db
+  container_name: db
 server:
   address: "0.0.0.0:8080"
   timeout: 4s
