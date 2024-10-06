@@ -1,0 +1,1 @@
+DROP TABLE IN EXISTS users;
