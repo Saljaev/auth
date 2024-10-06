@@ -8,14 +8,22 @@ import (
 
 type (
 	Config struct {
-		Server HTTPServer `yaml:"server"`
-		JWT    JWT        `yaml:"jwt"`
+		Server  HTTPServer `yaml:"server"`
+		Storage Storage    `yaml:"storage"`
+		JWT     JWT        `yaml:"jwt"`
 	}
 
 	HTTPServer struct {
 		Address     string        `yaml:"address" env-default:"localhost:8080"`
 		Timeout     time.Duration `yaml:"timeout" env-default:"5s"`
 		IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
+	}
+
+	Storage struct {
+		PG_User       string `yaml:"pg_user"`
+		PG_Password   string `yaml:"pg_password"`
+		PG_Database   string `yaml:"pg_database"`
+		ContainerName string `yaml:"container_name"`
 	}
 
 	JWT struct {
