@@ -32,11 +32,3 @@ func (c *Config) SetTokenExpiresIn(expiresIn time.Duration) *Config {
 	c.tokenExpiresIn = expiresIn
 	return c
 }
-
-func (c *Config) GetTokenExpiresIn() time.Duration {
-	return c.tokenExpiresIn
-}
-
-func (c *Config) GetSessionExpiresIn() time.Duration {
-	return c.sessionExpiresIn
-}
